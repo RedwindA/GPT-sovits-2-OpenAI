@@ -15,7 +15,7 @@ BACKEND_URL = os.environ.get('BACKEND_URL', 'http://127.0.0.1:9880')
 
 # Get VOICE_MAPPING from environment variable (it should be a JSON string)
 VOICE_MAPPING = json.loads(os.environ.get('VOICE_MAPPING', '{}'))
-
+REFER_MAPPING = json.loads(os.environ.get('REFER_MAPPING', '{}'))
 # Get other parameters from environment variables or use default values
 TEXT_LANGUAGE = os.environ.get('TEXT_LANGUAGE', 'zh')
 TOP_K = int(os.environ.get('TOP_K', 15))
@@ -48,26 +48,41 @@ def convert_tts():
     text = openai_data.get('input')
     voice = openai_data.get('voice')
 
-    # Get model paths from the VOICE_MAPPING according to the provided voice
+    # Get model paths and refer from the VOICE_MAPPING according to the provided voice
     voice_config = VOICE_MAPPING.get(voice)
+    refer_config = REFER_MAPPING.get(voice)
+
     if not voice_config:
         return f"Voice '{voice}' is not supported", 400
 
     gpt_model_path = voice_config.get('gpt_model_path')
     sovits_model_path = voice_config.get('sovits_model_path')
+    refer_wav_path = refer_config.get('refer_wav_path')
+    prompt_text = refer_config.get('prompt_text')
 
     if not gpt_model_path or not sovits_model_path:
         return f"Model paths for voice '{voice}' are missing", 500
 
-    # Step 1: Set the models in the backend
+    if not refer_wav_path or not prompt_text:
+        return f"Refer for voice '{voice}' are missing", 500
+    
+    # Step 1: Set the models and refer in the backend
     set_model_response = requests.post(f"{BACKEND_URL}/set_model", json={
         "gpt_model_path": gpt_model_path,
         "sovits_model_path": sovits_model_path
     })
 
-    # Check if the backend was able to set the models
+    set_refer_response = requests.post(f"{BACKEND_URL}/change_refer", json={
+        "refer_wav_path": refer_wav_path,
+        "prompt_text": prompt_text
+    })
+
+    # Check if the backend was able to set the models and refer
     if set_model_response.status_code != 200:
         return f"Backend failed to set models: {set_model_response.text}", set_model_response.status_code
+     
+    if set_refer_response.status_code != 200:
+        return f"Backend failed to set refer: {set_refer_response.text}", set_refer_response.status_code
 
     # Step 2: Send text-to-speech request to the backend
     backend_payload = {
