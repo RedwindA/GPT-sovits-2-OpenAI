@@ -6,6 +6,8 @@ import os  # Import os to access environment variables
 
 app = Flask(__name__)
 
+# Get API_KEY from environment variable
+API_KEY = os.environ.get('API_KEY')
 # Get BACKEND_URL from environment variable or use default
 BACKEND_URL = os.environ.get('BACKEND_URL', 'http://127.0.0.1:9880')
 
@@ -21,6 +23,21 @@ print(f"BACKEND_URL: {BACKEND_URL}, TEXT_LANGUAGE: {TEXT_LANGUAGE}, TOP_K: {TOP_
 
 @app.route('/v1/audio/speech', methods=['POST'])
 def convert_tts():
+    # Check API key if it's set in environment
+    if API_KEY:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return "Missing Authorization header", 401
+        
+        # Check if header starts with "Bearer "
+        if not auth_header.startswith('Bearer '):
+            return "Invalid Authorization header format", 401
+        
+        # Extract and verify API key
+        provided_key = auth_header.split(' ')[1]
+        if provided_key != API_KEY:
+            return "Invalid API key", 401
+
     # Extract 'input' field from OpenAI request
     openai_data = request.json
     text = openai_data.get('input')

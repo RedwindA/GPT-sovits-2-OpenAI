@@ -30,7 +30,6 @@ docker compose up -d
 
 ## Important Notes
 
-Authentication is not implemented, be cautious when exposing to public network
 
 **Since Docker is used, make sure the container can properly access the GPT-sovits API**
 
