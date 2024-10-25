@@ -31,3 +31,8 @@ docker compose up -d
 ## 注意事项
 
 没有实现鉴权，开放到公网请谨慎
+
+**由于使用了docker，请确保容器能够正确访问GPT-sovits API**
+
+如果两者运行在同一台宿主机上，而GPT-sovits API是直接运行的（非docker），环境变量应该是`BACKEND_URL=http://host.docker.internal:9880`（目前的默认配置）
+你也可以通过docker compose将两者组合在同一个docker网络中。
