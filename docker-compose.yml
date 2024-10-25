@@ -1,0 +1,13 @@
+services:
+  tts-service:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      BACKEND_URL: 'http://127.0.0.1:9880'
+      # The following environment variables can be set as needed. Uncomment and modify if necessary.
+      # TEXT_LANGUAGE: 'zh'
+      # TOP_K: '15'
+      # TOP_P: '1'
+      # TEMPERATURE: '0.45'
+      # SPEED: '0.95'
