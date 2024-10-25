@@ -30,7 +30,9 @@ docker compose up -d
 
 ## 注意事项
 
-**由于使用了docker，请确保容器能够正确访问GPT-sovits API**
+1. **由于使用了docker，请确保容器能够正确访问GPT-sovits API。**
+如果两者运行在同一台宿主机上，而GPT-sovits API是直接运行的（非docker），环境变量应该是`BACKEND_URL=http://host.docker.internal:9880`（目前的默认配置）。你也可以通过docker compose将两者组合在同一个docker网络中。
 
-如果两者运行在同一台宿主机上，而GPT-sovits API是直接运行的（非docker），环境变量应该是`BACKEND_URL=http://host.docker.internal:9880`（目前的默认配置）
-你也可以通过docker compose将两者组合在同一个docker网络中。
+2. 如果不配置API_KEY，则服务可被所有人访问
+
+3. 必须填写VOICE_MAPPING变量以实现切换模型。模型路径必须是正斜杠。

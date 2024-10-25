@@ -1,15 +1,20 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, jsonify
 import requests
 from pydub import AudioSegment
 import io
 import os  # Import os to access environment variables
+import json
 
 app = Flask(__name__)
 
 # Get API_KEY from environment variable
 API_KEY = os.environ.get('API_KEY')
+
 # Get BACKEND_URL from environment variable or use default
 BACKEND_URL = os.environ.get('BACKEND_URL', 'http://127.0.0.1:9880')
+
+# Get VOICE_MAPPING from environment variable (it should be a JSON string)
+VOICE_MAPPING = json.loads(os.environ.get('VOICE_MAPPING', '{}'))
 
 # Get other parameters from environment variables or use default values
 TEXT_LANGUAGE = os.environ.get('TEXT_LANGUAGE', 'zh')
@@ -19,7 +24,7 @@ TEMPERATURE = float(os.environ.get('TEMPERATURE', 0.45))
 SPEED = float(os.environ.get('SPEED', 0.95))
 
 # Print all parameters in one line for debugging
-print(f"BACKEND_URL: {BACKEND_URL}, TEXT_LANGUAGE: {TEXT_LANGUAGE}, TOP_K: {TOP_K}, TOP_P: {TOP_P}, TEMPERATURE: {TEMPERATURE}, SPEED: {SPEED}")
+print(f"BACKEND_URL: {BACKEND_URL}, TEXT_LANGUAGE: {TEXT_LANGUAGE}, TOP_K: {TOP_K}, TOP_P: {TOP_P}, TEMPERATURE: {TEMPERATURE}, SPEED: {SPEED}, VOICE_MAPPING: {VOICE_MAPPING}")
 
 @app.route('/v1/audio/speech', methods=['POST'])
 def convert_tts():
@@ -41,8 +46,30 @@ def convert_tts():
     # Extract 'input' field from OpenAI request
     openai_data = request.json
     text = openai_data.get('input')
+    voice = openai_data.get('voice')
 
-    # Construct backend request body
+    # Get model paths from the VOICE_MAPPING according to the provided voice
+    voice_config = VOICE_MAPPING.get(voice)
+    if not voice_config:
+        return f"Voice '{voice}' is not supported", 400
+
+    gpt_model_path = voice_config.get('gpt_model_path')
+    sovits_model_path = voice_config.get('sovits_model_path')
+
+    if not gpt_model_path or not sovits_model_path:
+        return f"Model paths for voice '{voice}' are missing", 500
+
+    # Step 1: Set the models in the backend
+    set_model_response = requests.post(f"{BACKEND_URL}/set_model", json={
+        "gpt_model_path": gpt_model_path,
+        "sovits_model_path": sovits_model_path
+    })
+
+    # Check if the backend was able to set the models
+    if set_model_response.status_code != 200:
+        return f"Backend failed to set models: {set_model_response.text}", set_model_response.status_code
+
+    # Step 2: Send text-to-speech request to the backend
     backend_payload = {
         "text": text,
         "text_language": TEXT_LANGUAGE,
@@ -52,14 +79,13 @@ def convert_tts():
         "speed": SPEED
     }
 
-    # Send request to backend
     backend_response = requests.post(BACKEND_URL, json=backend_payload)
 
     # Check if the backend response is successful
     if backend_response.status_code != 200:
         return f"Backend service error: {backend_response.text}", backend_response.status_code
 
-    # Convert returned WAV file to MP3
+    # Step 3: Convert returned WAV file to MP3
     wav_audio = io.BytesIO(backend_response.content)
     audio = AudioSegment.from_wav(wav_audio)
     mp3_audio = io.BytesIO()

@@ -30,8 +30,9 @@ docker compose up -d
 
 ## Important Notes
 
+1. **Since docker is used, please ensure the container can correctly access the GPT-sovits API.**
+If both are running on the same host machine, and GPT-sovits API is running directly (non-dockerized), the environment variable should be `BACKEND_URL=http://host.docker.internal:9880` (current default configuration). You can also combine both using docker compose in the same docker network.
 
-**Since Docker is used, make sure the container can properly access the GPT-sovits API**
+2. If API_KEY is not configured, the service will be accessible by everyone
 
-If both are running on the same host machine, and GPT-sovits API is running directly (non-docker), the environment variable should be `BACKEND_URL=http://host.docker.internal:9880` (current default configuration)
-You can also combine both in the same docker network through docker compose.
+3. The VOICE_MAPPING variable must be filled in to enable model switching. Model paths must use forward slashes.
