@@ -66,28 +66,24 @@ def convert_tts():
     if not refer_wav_path or not prompt_text:
         return f"Refer for voice '{voice}' are missing", 500
     
-    # Step 1: Set the models and refer in the backend
+    # Step 1: Set the models in the backend
     set_model_response = requests.post(f"{BACKEND_URL}/set_model", json={
         "gpt_model_path": gpt_model_path,
         "sovits_model_path": sovits_model_path
     })
 
-    set_refer_response = requests.post(f"{BACKEND_URL}/change_refer", json={
-        "refer_wav_path": refer_wav_path,
-        "prompt_text": prompt_text
-    })
 
     # Check if the backend was able to set the models and refer
     if set_model_response.status_code != 200:
         return f"Backend failed to set models: {set_model_response.text}", set_model_response.status_code
      
-    if set_refer_response.status_code != 200:
-        return f"Backend failed to set refer: {set_refer_response.text}", set_refer_response.status_code
 
     # Step 2: Send text-to-speech request to the backend
     backend_payload = {
         "text": text,
         "text_language": TEXT_LANGUAGE,
+        "refer_wav_path": refer_wav_path,
+        "prompt_text": prompt_text,
         "top_k": TOP_K,
         "top_p": TOP_P,
         "temperature": TEMPERATURE,
