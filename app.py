@@ -84,6 +84,7 @@ def convert_tts():
         "text_language": TEXT_LANGUAGE,
         "refer_wav_path": refer_wav_path,
         "prompt_text": prompt_text,
+        "prompt_language": TEXT_LANGUAGE, # Add language for prompt text to pass validation
         "top_k": TOP_K,
         "top_p": TOP_P,
         "temperature": TEMPERATURE,
