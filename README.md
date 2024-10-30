@@ -20,6 +20,7 @@ runtime\python.exe api.py <省略后续的参数>
 git clone https://github.com/RedwindA/GPT-sovits-2-OpenAI
 cd GPT-sovits-2-OpenAI
 cp .env.example .env
+cp config.yaml.example config.yaml
 ```
 
 使用Docker 启动：
@@ -34,5 +35,3 @@ docker compose up -d
 如果两者运行在同一台宿主机上，而GPT-sovits API是直接运行的（非docker），环境变量应该是`BACKEND_URL=http://host.docker.internal:9880`（目前的默认配置）。你也可以通过docker compose将两者组合在同一个docker网络中。
 
 2. 如果不配置API_KEY，则服务可被所有人访问
-
-3. 必须填写VOICE_MAPPING变量以实现切换模型。模型路径必须是正斜杠。

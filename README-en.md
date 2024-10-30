@@ -20,6 +20,7 @@ Clone this repository and modify the configuration
 git clone https://github.com/RedwindA/GPT-sovits-2-OpenAI
 cd GPT-sovits-2-OpenAI
 cp .env.example .env
+cp config.yaml.example config.yaml
 ```
 
 Start with Docker:
@@ -34,5 +35,3 @@ docker compose up -d
 If both are running on the same host machine, and GPT-sovits API is running directly (non-dockerized), the environment variable should be `BACKEND_URL=http://host.docker.internal:9880` (current default configuration). You can also combine both using docker compose in the same docker network.
 
 2. If API_KEY is not configured, the service will be accessible by everyone
-
-3. The VOICE_MAPPING variable must be filled in to enable model switching. Model paths must use forward slashes.

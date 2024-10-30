@@ -4,6 +4,7 @@ from pydub import AudioSegment
 import io
 import os  # Import os to access environment variables
 import json
+import yaml
 
 app = Flask(__name__)
 
@@ -13,9 +14,29 @@ API_KEY = os.environ.get('API_KEY')
 # Get BACKEND_URL from environment variable or use default
 BACKEND_URL = os.environ.get('BACKEND_URL', 'http://127.0.0.1:9880')
 
-# Get VOICE_MAPPING from environment variable (it should be a JSON string)
-VOICE_MAPPING = json.loads(os.environ.get('VOICE_MAPPING', '{}'))
-REFER_MAPPING = json.loads(os.environ.get('REFER_MAPPING', '{}'))
+# Load YAML configuration file
+def load_voice_config():
+    try:
+        with open('config.yaml', 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+            voices = config.get('voices', {})
+            
+            voice_mapping = {
+                voice: voice_data['models']
+                for voice, voice_data in voices.items()
+            }
+            refer_mapping = {
+                voice: voice_data['refer']
+                for voice, voice_data in voices.items()
+            }
+            return voice_mapping, refer_mapping
+    except Exception as e:
+        print(f"Error loading config.yaml: {e}")
+        return {}, {}
+
+# Replace original environment variable configuration
+VOICE_MAPPING, REFER_MAPPING = load_voice_config()
+
 # Get other parameters from environment variables or use default values
 TEXT_LANGUAGE = os.environ.get('TEXT_LANGUAGE', 'zh')
 TOP_K = int(os.environ.get('TOP_K', 15))

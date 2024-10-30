@@ -5,6 +5,8 @@ services:
       - "5000:5000"
     env_file:
       - .env
+    volumes:
+      - ./config.yaml:/app/config.yaml
     extra_hosts:
       - "host.docker.internal:host-gateway"
       

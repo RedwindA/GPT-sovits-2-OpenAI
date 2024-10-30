@@ -1,0 +1,15 @@
+ voices:
+  alloy:
+    models:
+      gpt_model_path: "F:/model1"
+      sovits_model_path: "F:/model2"
+    refer:
+      refer_wav_path: "F:/1.wav"
+      prompt_text: "text_here"
+  echo:
+    models:
+      gpt_model_path: "F:/model3"
+      sovits_model_path: "F:/model4"
+    refer:
+      refer_wav_path: "F:/2.wav"
+      prompt_text: "text_here"
