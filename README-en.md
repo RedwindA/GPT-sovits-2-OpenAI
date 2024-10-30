@@ -23,6 +23,13 @@ cp .env.example .env
 cp config.yaml.example config.yaml
 ```
 
+For Windows, the first two lines remain the same, and the last two lines are changed to:
+
+```cmd
+copy .env.example .env
+copy config.yaml.example config.yaml
+```
+
 Start with Docker:
 
 ```shell

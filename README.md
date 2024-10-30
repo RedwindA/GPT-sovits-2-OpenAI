@@ -16,11 +16,18 @@ runtime\python.exe api.py <省略后续的参数>
 
 克隆本仓库并修改配置
 
-```shell
+```Linux shell
 git clone https://github.com/RedwindA/GPT-sovits-2-OpenAI
 cd GPT-sovits-2-OpenAI
 cp .env.example .env
 cp config.yaml.example config.yaml
+```
+
+对于Windows，前两行不变，最后两行改为：
+
+```cmd
+copy .env.example .env
+copy config.yaml.example config.yaml
 ```
 
 使用Docker 启动：
