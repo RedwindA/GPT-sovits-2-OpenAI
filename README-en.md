@@ -42,3 +42,9 @@ docker compose up -d
 If both are running on the same host machine, and GPT-sovits API is running directly (non-dockerized), the environment variable should be `BACKEND_URL=http://host.docker.internal:9880` (current default configuration). You can also combine both using docker compose in the same docker network.
 
 2. If API_KEY is not configured, the service will be accessible by everyone
+
+## Future Development Plans
+
+1. Support streaming
+2. Port or merge v2 to support different text segmentation strategies
+
