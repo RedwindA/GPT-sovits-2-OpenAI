@@ -1,4 +1,6 @@
- voices:
+# 建议使用正斜杠路径
+# Recommended to use forward slashes in paths
+voices:
   alloy:
     models:
       gpt_model_path: "F:/model1"
@@ -6,7 +8,7 @@
     refer:
       refer_wav_path: "F:/1.wav"
       prompt_text: "text_here"
-  echo:
+echo:
     models:
       gpt_model_path: "F:/model3"
       sovits_model_path: "F:/model4"
