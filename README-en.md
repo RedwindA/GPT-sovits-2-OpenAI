@@ -36,6 +36,8 @@ Start with Docker:
 docker compose up -d
 ```
 
+After starting, the service runs as an OpenAI TTS API service. The base_url is http://your_ip:5000/v1, and the complete url is http://your_ip:5000/v1/audio/speech, which can be filled in the application.
+
 ## Important Notes
 
 1. **Since docker is used, please ensure the container can correctly access the GPT-sovits API.**

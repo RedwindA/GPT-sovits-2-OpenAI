@@ -36,6 +36,8 @@ copy config.yaml.example config.yaml
 docker compose up -d
 ```
 
+启动后，本服务就作为一个OpenAI TTS的API服务运行。base_url为http://your_ip:5000/v1，完整的url为http://your_ip:5000/v1/audio/speech，填入应用中即可。
+
 ## 注意事项
 
 1. **由于使用了docker，请确保容器能够正确访问GPT-sovits API。**
