@@ -8,4 +8,5 @@ services:
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      
+    volumes:
+      - ./config.yaml:/app/config.yaml      
