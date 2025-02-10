@@ -1,6 +1,6 @@
 services:
   tts-service:
-    image: austinleo/tts-adapter:latest
+    image: austinleo/tts-adapter:v2
     ports:
       - "5000:5000"
     env_file:
@@ -8,4 +8,6 @@ services:
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./config.yaml:/app/config.yaml
       
