@@ -14,6 +14,12 @@ API_KEY = os.environ.get('API_KEY')
 # Get BACKEND_URL from environment variable or use default
 BACKEND_URL = os.environ.get('BACKEND_URL', 'http://127.0.0.1:9880')
 
+# Get text_split_method from environment variable or use default
+TEXT_SPLIT_METHOD = os.environ.get('TEXT_SPLIT_METHOD', 'cut1') 
+
+# Set Stream mode(WIP)
+# STREAM_MODE = os.environ.get('STREAM_MODE', False)
+
 # Load YAML configuration file
 def load_voice_config():
     try:
@@ -87,32 +93,26 @@ def convert_tts():
     if not refer_wav_path or not prompt_text:
         return f"Refer for voice '{voice}' are missing", 500
     
-    # Step 1: Set the models in the backend
-    set_model_response = requests.post(f"{BACKEND_URL}/set_model", json={
-        "gpt_model_path": gpt_model_path,
-        "sovits_model_path": sovits_model_path
-    })
+    # Step 1: 替换原先 /set_model 调用为 /set_gpt_weights 和 /set_sovits_weights
+    requests.get(f"{BACKEND_URL}/set_gpt_weights", params={"weights_path": gpt_model_path})
+    requests.get(f"{BACKEND_URL}/set_sovits_weights", params={"weights_path": sovits_model_path})
 
-
-    # Check if the backend was able to set the models and refer
-    if set_model_response.status_code != 200:
-        return f"Backend failed to set models: {set_model_response.text}", set_model_response.status_code
-     
-
-    # Step 2: Send text-to-speech request to the backend
+    # Step 2: 调整 TTS 请求到 /tts，并修改参数字段名
     backend_payload = {
         "text": text,
-        "text_language": TEXT_LANGUAGE,
-        "refer_wav_path": refer_wav_path,
+        "text_lang": TEXT_LANGUAGE,
+        "ref_audio_path": refer_wav_path,
         "prompt_text": prompt_text,
-        "prompt_language": TEXT_LANGUAGE, # Add language for prompt text to pass validation
+        "prompt_lang": TEXT_LANGUAGE,
         "top_k": TOP_K,
         "top_p": TOP_P,
         "temperature": TEMPERATURE,
-        "speed": SPEED
+        "speed_factor": SPEED,
+        "text_split_method": TEXT_SPLIT_METHOD
+        # "streaming_mode": STREAM_MODE
     }
 
-    backend_response = requests.post(BACKEND_URL, json=backend_payload)
+    backend_response = requests.post(f"{BACKEND_URL}/tts", json=backend_payload)
 
     # Check if the backend response is successful
     if backend_response.status_code != 200:
