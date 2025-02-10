@@ -9,7 +9,7 @@
 根据原项目中的api.py自带的文档启动GPT-sovits的api服务。如果你使用的是整合包，务必以如下格式在整合包的根目录中启动：
 
 ```shell
-runtime\python.exe api.py <省略后续的参数>
+runtime\python.exe api_v2.py <省略后续的参数>
 ```
 
 ## 使用方法
