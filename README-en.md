@@ -48,5 +48,6 @@ If both are running on the same host machine, and GPT-sovits API is running dire
 ## Future Development Plans
 
 1. Support streaming
-2. Port or merge v2 to support different text segmentation strategies
+2. ~~Port or merge v2 to support different text segmentation strategies~~ Implemented in the apiv2 branch
+```
 
